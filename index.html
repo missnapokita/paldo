@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="Secure Bida Reels user and VIP administration dashboard">
+  <title>Bida Reels Admin</title>
+  <link rel="icon" href="assets/logo.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main id="loginView" class="login-view">
+    <section class="login-card">
+      <div class="brand-mark"><img src="assets/logo.png" alt="Bida Reels"></div>
+      <p class="eyebrow">CONTROL CENTER</p>
+      <h1><span>Bida</span> <strong>Reels</strong></h1>
+      <p class="login-copy">Manage registered users, account access, and VIP ad-free time.</p>
+      <button id="loginButton" class="google-button" type="button">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.27c0-.7-.06-1.2-.2-1.73H12v3.31h5.37a4.6 4.6 0 0 1-1.99 2.93l-.02.11 2.89 2.24.2.02c1.84-1.7 2.9-4.2 2.9-6.88Z"/><path fill="#34A853" d="M12 21.75c2.62 0 4.82-.87 6.43-2.6l-3.07-2.37c-.82.55-1.92.94-3.36.94a5.83 5.83 0 0 1-5.51-4.02l-.1.01-3.01 2.33-.04.1A9.72 9.72 0 0 0 12 21.75Z"/><path fill="#FBBC05" d="M6.49 13.7A5.98 5.98 0 0 1 6.17 12c0-.59.11-1.16.3-1.7v-.12L3.43 7.82l-.1.05A9.73 9.73 0 0 0 2.28 12c0 1.49.34 2.9 1.05 4.13l3.16-2.43Z"/><path fill="#EB4335" d="M12 6.28c1.83 0 3.06.79 3.77 1.45l2.72-2.65C16.81 3.52 14.62 2.25 12 2.25a9.72 9.72 0 0 0-8.66 5.62l3.14 2.43A5.85 5.85 0 0 1 12 6.28Z"/></svg>
+        Continue with Google
+      </button>
+      <p id="loginMessage" class="login-message" aria-live="polite">Only approved administrator accounts can enter.</p>
+    </section>
+  </main>
+
+  <div id="dashboardView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="side-brand">
+        <img src="assets/logo.png" alt="">
+        <div><span>Bida</span><strong>Reels</strong><small>ADMIN</small></div>
+      </div>
+      <nav aria-label="Admin navigation">
+        <button class="nav-item active" type="button" data-view="users">
+          <span class="nav-icon">⌂</span><span>Users</span>
+        </button>
+      </nav>
+      <div class="admin-account">
+        <img id="adminPhoto" alt="Admin profile">
+        <div><strong id="adminName">Administrator</strong><span id="adminEmail"></span></div>
+        <button id="logoutButton" class="icon-button" type="button" title="Sign out" aria-label="Sign out">↗</button>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">BIDA REELS</p>
+          <h2>User Management</h2>
+        </div>
+        <div id="syncState" class="sync-state"><i></i><span>Connecting</span></div>
+      </header>
+
+      <section class="stats-grid" aria-label="User statistics">
+        <article class="stat-card"><span>Total users</span><strong id="totalUsers">0</strong><small>Registered accounts</small></article>
+        <article class="stat-card vip"><span>Active VIP</span><strong id="activeVip">0</strong><small>Ads disabled</small></article>
+        <article class="stat-card blocked"><span>Blocked</span><strong id="blockedUsers">0</strong><small>Access disabled</small></article>
+        <article class="stat-card"><span>Recent</span><strong id="recentUsers">0</strong><small>Logged in within 7 days</small></article>
+      </section>
+
+      <section class="users-panel">
+        <div class="panel-heading">
+          <div><h3>Registered users</h3><p>Live data from Firebase Realtime Database</p></div>
+          <div class="toolbar">
+            <label class="search-box">
+              <span>⌕</span>
+              <input id="searchInput" type="search" placeholder="Search name, email or UID" autocomplete="off">
+            </label>
+            <select id="statusFilter" aria-label="Filter users">
+              <option value="all">All users</option>
+              <option value="vip">Active VIP</option>
+              <option value="blocked">Blocked</option>
+              <option value="regular">Regular</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>User</th><th>Status</th><th>VIP remaining</th><th>Last login</th><th></th></tr></thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+          <div id="emptyState" class="empty-state hidden">
+            <div>⌕</div><strong>No users found</strong><span>Try changing your search or filter.</span>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <div id="userModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-scrim" type="button" data-close-modal aria-label="Close"></button>
+    <section class="modal-card">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close">×</button>
+      <div class="modal-profile">
+        <img id="modalPhoto" alt="User profile">
+        <div><p class="eyebrow">USER ACCOUNT</p><h3 id="modalTitle">User</h3><span id="modalEmail"></span></div>
+      </div>
+      <div class="uid-box"><span>Firebase UID</span><code id="modalUid"></code><button id="copyUid" type="button">Copy</button></div>
+      <div class="detail-grid">
+        <div><span>Account status</span><strong id="modalStatus"></strong></div>
+        <div><span>VIP remaining</span><strong id="modalCountdown"></strong></div>
+        <div><span>Created</span><strong id="modalCreated"></strong></div>
+        <div><span>Last login</span><strong id="modalLastLogin"></strong></div>
+      </div>
+
+      <div class="action-section">
+        <div class="section-title"><div><h4>VIP access</h4><p>VIP users bypass rewarded ads until expiry.</p></div></div>
+        <div class="duration-grid">
+          <button type="button" data-vip-days="7"><strong>1 Week</strong><span>7 days</span></button>
+          <button type="button" data-vip-days="30"><strong>1 Month</strong><span>30 days</span></button>
+          <button type="button" data-vip-days="90"><strong>3 Months</strong><span>90 days</span></button>
+          <button type="button" data-vip-days="365"><strong>1 Year</strong><span>365 days</span></button>
+        </div>
+        <button id="removeVipButton" class="secondary-action" type="button">Remove VIP access</button>
+      </div>
+
+      <div class="action-section danger-zone">
+        <div class="section-title"><div><h4>Account access</h4><p>Blocked users are signed out and cannot enter Bida Reels.</p></div></div>
+        <label for="blockReason">Reason (optional)</label>
+        <input id="blockReason" type="text" maxlength="120" placeholder="Reason shown in admin records">
+        <button id="blockButton" class="danger-action" type="button">Block this user</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
